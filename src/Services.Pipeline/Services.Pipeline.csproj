@@ -44,6 +44,8 @@
     <Compile Include="StateControl\ServiceControl.cs" />
     <Compile Include="StateControl\ServiceInfo.cs" />
     <Compile Include="StateControl\ServiceState.cs" />
+    <Compile Include="StateControl\ServiceTimer.cs" />
+    <Compile Include="StateControl\WorkflowProcess.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Installer\" />

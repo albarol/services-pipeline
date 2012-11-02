@@ -21,7 +21,7 @@
                 State = ServiceState.Running,
                 LatestExecution = DateTime.Now
             };
-            
+
             // Act:
             ServiceControl.KeepState(serviceInfo);
 
