@@ -1,12 +1,11 @@
-﻿namespace Services.Pipeline.Logging
+﻿namespace Services.Pipeline.Report.Logging
 {
     using System;
-    using System.Diagnostics;
 
     public class Entry
     {
         public string Message { get; set; }
-        public EventLogEntryType EntryType { get; set; }
+        public EntryType EntryType { get; set; }
         public DateTime TimeGenerated { get; set; }
     }
 }
