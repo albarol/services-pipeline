@@ -18,7 +18,15 @@
                 };
             }
         }
-        
+
+        public double Interval
+        {
+            get
+            {
+                return this.timer.Interval;
+            }
+        }
+
         public static ServiceTimer FromMinutes(int minutes)
         {
             return new ServiceTimer(TimeSpan.FromMinutes(minutes));
