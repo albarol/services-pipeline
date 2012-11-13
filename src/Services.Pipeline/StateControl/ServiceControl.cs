@@ -3,22 +3,21 @@
     using System;
     using System.IO;
     using System.IO.IsolatedStorage;
-    using System.Text;
-    using System.Xml;
+    using System.Xml.Serialization;
 
     public class ServiceControl
     {
         private static readonly IsolatedStorageFile Storage = IsolatedStorageFile.GetStore(IsolatedStorageScope.User | IsolatedStorageScope.Assembly, null, null);
 
-        public static void KeepState(ServiceInfo serviceInfo)
+        public static void KeepState<T>(T serviceInfo) where T : ServiceInfo
         {
-            var builder = new StringBuilder();
-            builder.Append("<?xml version=\"1.0\"?>");
-            builder.AppendFormat("<{0}>", serviceInfo.Name);
-            builder.AppendFormat("<State>{0}</State>", (int)serviceInfo.State);
-            builder.AppendFormat("<LatestExecution>{0}</LatestExecution>", serviceInfo.LatestExecution.ToString("yyyy-MM-dd HH:mm:ss"));
-            builder.AppendFormat("</{0}>", serviceInfo.Name);
-            CreateOrUpdate(serviceInfo.Name, builder.ToString());
+            var serializer = new XmlSerializer(typeof(T));
+            using (var stream = new StringWriter())
+            {
+                serializer.Serialize(stream, serviceInfo);
+                stream.Flush();
+                CreateOrUpdate(serviceInfo.Name, stream.ToString());
+            }
         }
 
         public static void RemoveState(string serviceName)
@@ -30,25 +29,25 @@
             }
         }
 
-        public static ServiceInfo RecoverState(string name)
+        public static ServiceInfo RecoverState<T>(string name) where T : ServiceInfo
         {
             if (!FileExists(name))
             {
                 return null;
             }
 
-            var document = new XmlDocument();
+            var serializer = new XmlSerializer(typeof(T));
             using (var reader = new StreamReader(new IsolatedStorageFileStream(GetFileName(name), FileMode.Open, Storage)))
             {
-                document.LoadXml(reader.ReadToEnd());
+                try
+                {
+                    return (T)serializer.Deserialize(reader);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException(string.Format("Failed to {0} create object from xml string", ex));
+                }
             }
-
-            return new ServiceInfo
-            {
-                Name = name,
-                LatestExecution = Convert.ToDateTime(document.ChildNodes[1].ChildNodes[1].InnerText),
-                State = (ServiceState)Convert.ToInt32(document.ChildNodes[1].ChildNodes[0].InnerText)
-            };
         }
 
         private static void CreateOrUpdate(string name, string content)

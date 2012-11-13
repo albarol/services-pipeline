@@ -26,7 +26,7 @@
             ServiceControl.KeepState(serviceInfo);
 
             // Assert:
-            var info = ServiceControl.RecoverState("simple_service");
+            var info = ServiceControl.RecoverState<ServiceInfo>("simple_service");
             info.State.Should().Not.Be.EqualTo(ServiceState.Stopped);
         }
 
@@ -48,7 +48,7 @@
             ServiceControl.KeepState(serviceInfo);
 
             // Arrange:
-            var info = ServiceControl.RecoverState("simple_service");
+            var info = ServiceControl.RecoverState<ServiceInfo>("simple_service");
             info.State.Should().Be.EqualTo(ServiceState.Running);
         }
 
@@ -69,7 +69,7 @@
             ServiceControl.RemoveState("simple_service");
 
             // Arrange:
-            var info = ServiceControl.RecoverState("simple_service");
+            var info = ServiceControl.RecoverState<ServiceInfo>("simple_service");
             info.Should().Be.Null();
         }
     }

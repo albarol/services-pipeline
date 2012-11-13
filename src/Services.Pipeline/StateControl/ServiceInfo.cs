@@ -2,6 +2,7 @@
 {
     using System;
 
+    [Serializable]
     public class ServiceInfo
     {
         public string Name { get; set; }
