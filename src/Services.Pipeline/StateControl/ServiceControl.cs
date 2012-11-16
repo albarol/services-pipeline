@@ -29,7 +29,7 @@
             }
         }
 
-        public static ServiceInfo RecoverState<T>(string name) where T : ServiceInfo
+        public static T RecoverState<T>(string name) where T : ServiceInfo
         {
             if (!FileExists(name))
             {

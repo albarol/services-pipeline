@@ -10,8 +10,9 @@
     {
         protected readonly ServiceProcessInstaller ProcessInstaller;
         protected readonly ServiceInstaller ServiceInstaller;
+        private readonly string sectionName;
 
-        protected DynamicInstaller()
+        protected DynamicInstaller(string sectionName)
         {
             this.ProcessInstaller = new ServiceProcessInstaller
             {
@@ -26,13 +27,14 @@
                 DisplayName = string.Empty,
                 Description = string.Empty
             };
+            this.sectionName = sectionName;
             Installers.AddRange(new Installer[] {this.ProcessInstaller, this.ServiceInstaller});
         }
     
         protected override void OnBeforeInstall(IDictionary savedState)
         {
             base.OnBeforeInstall(savedState);
-            var config = (DynamicInstallerSection)System.Configuration.ConfigurationManager.GetSection("dynamicInstallerGroup/dynamicInstaller");
+            var config = (DynamicInstallerSection)System.Configuration.ConfigurationManager.GetSection(this.sectionName);
             this.ServiceInstaller.ServiceName = config.ServiceInfo.Name;
             this.ServiceInstaller.Description = config.ServiceInfo.Description;
             this.ServiceInstaller.StartType = config.ServiceInfo.StartType;
